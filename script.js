@@ -1,5 +1,6 @@
 SURVEYS = {};
 RESPONSES = [];
+CONTACTLISTS = [];
 
 // Listen for any attempts to call changePage().
 $(document).bind( "pagebeforechange", function( e, data ) {
@@ -51,40 +52,9 @@ $(document).bind( "pagebeforechange", function( e, data ) {
 				
 $(document).ready(function(){
 	//fire the missles!
-	base = 'https://app.fluidsurveys.com/api/v2';
-	
-	
-	callAPI('GET',base+'/surveys/',false,function(data){
-		 //console.log(data);
-		var s = '';
-		 $.each(data.surveys.reverse(),function(){
-		 	s = s + '<li><a href="#surveylist?survey='+this.id+'">'+this.name+'</a></li>';
-		 	//var survey = this;
-		 	SURVEYS['s'+this.id] = {title: this.name,
-		 							creator: this.creator,
-		 							created_at: this.created_at,
-		 							responses: this.responses,
-		 							deploy: this.deploy_uri,
-		 							id: this.id
-		 							};
-		// 	console.log(this.id);
-		// 	//callAPI('GET','surveys/'+this.id+'/responses',function(responses){
-		 		//console.log(responses);
-		 		//var survey_page = $('<div id="s'+survey.id+'" data-role="page"></div>');
-		 		//$(survey_page).append('<div data-role="Header"><h1>'+survey.name+'</h1></div>');
-		 		//$(survey_page).append('<div data-role="Content"><p>blah blah blah</p></div>');
-		 		//$(survey_page).page();
-		 		//$(survey_page).appendTo('body');
-			//});
-		});
-		
-		$('#survey-list').append(s);
-		$('#survey-list').listview('refresh');
-
-		//console.log('GET surveys',JSON.parse(data));
-
-	});
-
+	base = 'https://app.fluidsurveys.com/api/v2';	
+	callAPI('GET',base+'/surveys/',false,loadSurveys);
+	callAPI('GET',base+'/contact-lists/',false,loadContactLists);
 				
 }); //end of document ready.
 

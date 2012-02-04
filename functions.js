@@ -274,3 +274,36 @@ function sendEmail( urlObj, options )
 		$.mobile.changePage( $page, options );
 	}
 }
+
+function loadSurveys(data){
+	//Recieves a list of surveys in data and writes them out in a list.
+	var s = '';
+	$.each(data.surveys.reverse(),function(){
+		s = s + '<li><a href="#surveylist?survey='+this.id+'">'+this.name+'</a></li>';
+		//var survey = this;
+		SURVEYS['s'+this.id] = {title: this.name,
+								creator: this.creator,
+								created_at: this.created_at,
+								responses: this.responses,
+								deploy: this.deploy_uri,
+								id: this.id
+								};
+	});
+	
+	$('#survey-list').append(s);
+	$('#survey-list').listview('refresh');
+}
+
+function loadContactLists(data){
+	//Recieves a list of contact lists and stores them to the app object.
+	for(var i=0; i<data.total; i++){
+		CONTACTLISTS.push({
+			contacts: data.lists[i].contacts,
+			contacts_uri: data.lists[i].contacts_uri,
+			id: data.lists[i].id,
+			name: data.lists[i].name,
+			uri: data.lists[i].uri
+		});
+	}
+	console.log('made lists',CONTACTLISTS);
+}
