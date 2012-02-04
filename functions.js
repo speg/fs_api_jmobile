@@ -296,7 +296,9 @@ function loadSurveys(data){
 
 function loadContactLists(data){
 	//Recieves a list of contact lists and stores them to the app object.
+	var markup = '<legend>Select one or more Contact Lists to send to:</legend>';
 	for(var i=0; i<data.total; i++){
+		//add each list to the CONTACTLASTS
 		CONTACTLISTS.push({
 			contacts: data.lists[i].contacts,
 			contacts_uri: data.lists[i].contacts_uri,
@@ -304,6 +306,10 @@ function loadContactLists(data){
 			name: data.lists[i].name,
 			uri: data.lists[i].uri
 		});
+		
+		//and build it's HTML
+		markup += '<input type="checkbox" name="checkbox-'+i+'" id="checkbox-'+i+'" class="custom" />';
+		markup += '<label for="checkbox-'+i+'">'+data.lists[i].name+'</label>';
 	}
-	console.log('made lists',CONTACTLISTS);
+	$('#contactListSelectors').html(markup);
 }

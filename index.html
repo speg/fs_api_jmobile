@@ -45,10 +45,21 @@
 <div id="invite" data-role="page" data-theme="b" data-add-back-btn="true">
   <div data-role="header"><h1>Invite</h1></div>
   <div data-role="content">
-  	<label for="basic">Subject:</label><input type="text" name="subject" id="subject" value="Subject"  />
+  	<div data-role="fieldcontain">
+    	<fieldset data-role="controlgroup" id="contactListSelectors">
+		   
+    	</fieldset>
+	</div>
+	<a href="#compose" data-rel="popup" data-role="button">Compose</a>
+  </div>
+</div>
+
+<div id="compose" data-role="page" data-theme="b" data-add-back-btn="true">
+  <div data-role="header"><h1></h1></div>
+  <div data-role="content">
+	<label for="basic">Subject:</label><input type="text" name="subject" id="subject" value="Subject"  />
 	<label for="textarea-a">Message:</label><textarea name="textarea" id="textarea-a">Please fill out our survey!\n\n[Invite Link]</textarea>
 	<a href="#send" data-role="button">Send</a>
-  </div>
 </div>
 
 </body>	
