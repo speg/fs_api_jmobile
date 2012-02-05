@@ -45,11 +45,6 @@ $(document).bind( "pagebeforechange", function( e, data ) {
 		if (u.hash.search(/^#send/) !== -1 ) {
 			console.log('SEND MAIL');
 			
-
-			
-			//create the email:
-			createEmail();
-
 			//find checked contact lists
 			
 			var checked = $(':checked','#contactListSelectors');
@@ -59,8 +54,10 @@ $(document).bind( "pagebeforechange", function( e, data ) {
 				//add each list ID to the array of selected lists
 				APP.selected_list_ids.push(+el.id.substring(9));
 			});
-			
-			console.log('checked',checked);
+
+			//create the email:
+			createEmail();
+
 			//sendEmail(u, data.options);		
 			e.preventDefault();
 		}	
@@ -72,9 +69,8 @@ $(document).bind( "pagebeforechange", function( e, data ) {
 				
 $(document).ready(function(){
 	//fire the missles!
-	base = 'https://app.fluidsurveys.com/api/v2';	
-	callAPI('GET',base+'/surveys/',false,loadSurveys);
-	callAPI('GET',base+'/contact-lists/',false,loadContactLists);
+	callAPI('GET','/surveys/',false,loadSurveys);
+	callAPI('GET','/contact-lists/',false,loadContactLists);
 
 				
 }); //end of document ready.

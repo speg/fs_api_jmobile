@@ -1,23 +1,65 @@
-proxy = 'http://www.speg.com/chideit/proxy/proxy.php?method=';
-
 function BlockMove(event) {
 	// Tell Safari not to move the window.
 	//event.preventDefault() ;
 }
 
+function stringify(obj){
+	//turns all properties into strings and returns as stringified JSON;
+	var dupe = {};
+	for (var name in obj){
+		dupe[name] = (''+obj[name]).replace(['>','<'],['&gt;','&lt;']);		
+	}
+	console.log()
+	return JSON.stringify(dupe);
+}
 
 function callAPI(type,url,data,callback){
+	var link, header;
+	if (url.indexOf('http') === 0){
+		//passed in a proper uri, do nothing;
+		link = 'http://www.speg.com/chideit/proxy/proxy.php?method='+url;
+	}else{
+		if (url.indexOf('?') === -1 && url.charAt(url.length-1) !== '/'){
+			url = url + '/';	//I ALWAYS FORGOT TO ADD THIS STUPID SLASH
+		}
+		console.log('the url is',url);
+		if (url.charAt(0) === '/'){
+			link = 'http://www.speg.com/chideit/proxy/proxy.php?method=https://app.fluidsurveys.com/api/v2'+url;
+		}else{
+			link = 'http://www.speg.com/chideit/proxy/proxy.php?method=https://app.fluidsurveys.com/api/v2/'+url;
+		}
+
+
+	}
+
+	if (type.toUpperCase() === 'POST'){
+		if (typeof(data) === 'object'){
+			header = 'application/json';
+			data = stringify(data);
+		}else if(typeof(data) === 'string'){
+			header = 'application/x-www-form-urlencoded';
+
+		}
+		console.log('POSTING ', data);
+	}
+
 	var j = $.ajax({
 			beforeSend: function(xhr){
-				xhr.setRequestHeader('Content-Type', 'application/json');	
+				if (type.toUpperCase() === 'POST'){
+					xhr.setRequestHeader('Content-Type', header);
+				}
 			},
-			url: proxy+url,
+			url: link,
 			type: type,
 			processData:false,
 			data: data,
 			success: function(data){
 				//console.log('callAPI',data);
-				callback(JSON.parse(data));
+				try{
+					callback(JSON.parse(data));
+				}catch(err){
+					console.log('There was an API error:',err,data);
+				}
 			},
 			error: function(a,b,c){
 				console.log(a,b,c);
@@ -70,7 +112,7 @@ function showSurvey( urlObj, options )
 
 		//as we're loadign the survey we'll pre-load it's responses
 		
-		callAPI('GET',base+'/surveys/'+survey.id+'/responses/',false, function(data){
+		callAPI('GET','/surveys/'+survey.id+'/responses/',false, function(data){
 			//add each of the responses to the responses list.
 			APP.responses = [];
 			//console.log(APP.responses,data);
@@ -322,7 +364,7 @@ function createEmail(){
 	//adds contacts to email.
 	//sends the email.
 	console.log('sending email');
-	callAPI('POST',base+'/emails/?survey='+APP.survey.id,'{"message":"Hello Friends! [Invite Link]", "sender":"Steve &lt;steve@speg.com&gt;", "subject": "Hello World"}',readyEmail);
+	callAPI('POST','/emails/?survey='+APP.survey.id,{message:"Hello Friends! [Invite Link]", sender:"Steve <steve@speg.com>", subject: "Hello World"},readyEmail);
 }
 
 function readyEmail(data){
@@ -330,7 +372,7 @@ function readyEmail(data){
 
 	//add contact lists if any
 	if (APP.selected_list_ids.length > 0){
-		callAPI('POST', data.recipients_uri, 'contact_list='+APP.selected_list_ids[0], function(){
+		callAPI('POST', data.recipients_uri, 'contact_list='+APP.contactlists[APP.selected_list_ids[0]].id, function(){
 			sendEmail(data.send_uri);
 		});
 	}
