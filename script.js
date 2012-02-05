@@ -1,6 +1,9 @@
-SURVEYS = {};
-RESPONSES = [];
-CONTACTLISTS = [];
+APP = {
+	survey: null,
+	surveys:{},
+	responses:[],
+	contactlists:[]
+};
 
 // Listen for any attempts to call changePage().
 $(document).bind( "pagebeforechange", function( e, data ) {
@@ -41,8 +44,23 @@ $(document).bind( "pagebeforechange", function( e, data ) {
 
 		if (u.hash.search(/^#send/) !== -1 ) {
 			console.log('SEND MAIL');
+			
+			//create the email:
+
+
+			//find checked contact lists
+			
+			var checked = $(':checked','#contactListSelectors');
+			
+
+
+			checked.each(function(i,el){
+				console.log('Adding contact list',+el.id.substring(9));
+			});
+			
+			console.log('checked',checked);
 			//sendEmail(u, data.options);		
-			//e.preventDefault();
+			e.preventDefault();
 		}	
 		
 	
@@ -55,6 +73,7 @@ $(document).ready(function(){
 	base = 'https://app.fluidsurveys.com/api/v2';	
 	callAPI('GET',base+'/surveys/',false,loadSurveys);
 	callAPI('GET',base+'/contact-lists/',false,loadContactLists);
+
 				
 }); //end of document ready.
 

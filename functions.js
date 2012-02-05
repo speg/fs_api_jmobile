@@ -38,7 +38,7 @@ function showSurvey( urlObj, options )
 		// instead fire off an ajax request to fetch the data, but
 		// for the purposes of this sample, it's already in memory.
 		// survey = surveyData[ surveyID ],
-		survey = SURVEYS[ 's'+surveyID ];
+		survey = APP.surveys[ 's'+surveyID ];
 		// The pages we use to display our content are already in
 		// the DOM. The id of the page we are going to write our
 		// content into is specified in the hash before the '?'.
@@ -65,12 +65,15 @@ function showSurvey( urlObj, options )
 			// The number of items in the survey.
 			//numItems = cItems.length;
 
+			// update APP object with selected survey:
+			APP.survey = survey;
+
 		//as we're loadign the survey we'll pre-load it's responses
 		
 		callAPI('GET',base+'/surveys/'+survey.id+'/responses/',false, function(data){
 			//add each of the responses to the responses list.
-			RESPONSES = [];
-			//console.log(RESPONSES,data);
+			APP.responses = [];
+			//console.log(APP.responses,data);
 			$.each(data.responses,function(i,response){
 				re = [];
 				$.each(response,function(key,value){
@@ -84,9 +87,9 @@ function showSurvey( urlObj, options )
 					}
 						
 				});
-				RESPONSES.push(re);
+				APP.responses.push(re);
 			});
-		//.log(RESPONSES);
+		//.log(APP.responses);
 		});//end callAPI
 		
 		
@@ -142,13 +145,13 @@ function showResponses( urlObj, options )
 		// instead fire off an ajax request to fetch the data, but
 		// for the purposes of this sample, it's already in memory.
 		// survey = surveyData[ surveyID ],
-	//	survey = SURVEYS[ 's'+surveyID ];
+	//	survey = APP.surveys[ 's'+surveyID ];
 		// The pages we use to display our content are already in
 		// the DOM. The id of the page we are going to write our
 		// content into is specified in the hash before the '?'.
 		//var pageSelector = urlObj.hash.replace( /\?.*$/, "" );
 
-	if ( RESPONSES ) {
+	if ( APP.responses ) {
 		// Get the page we are going to dump our content into.
 		var $page = $( '#responses' ),
 
@@ -160,17 +163,17 @@ function showResponses( urlObj, options )
 
 			markup = "",
 		
-			numItems = RESPONSES.length;
+			numItems = APP.responses.length;
 
 		
 		// Generate a list item for each item in the survey
 		// and add it to our markup.
 		for ( var i = 0; i < numItems; i++ ) {
-		 	//build RESPONSES
+		 	//build APP.responses
 		 	markup += "<ul data-role='listview' data-inset='true'>";
-		 	var questions = RESPONSES[i].length;
+		 	var questions = APP.responses[i].length;
 		 	for (var j = 0; j < questions; j++){
-		 		markup += "<li>" + RESPONSES[i][j].id + " : "+RESPONSES[i][j].value+"</li>";
+		 		markup += "<li>" + APP.responses[i][j].id + " : "+APP.responses[i][j].value+"</li>";
 		 	}
 		 	markup += "</ul>"
 		 }
@@ -212,7 +215,7 @@ function showResponses( urlObj, options )
 function showInvite( urlObj, options )
 {
 	var surveyID = urlObj.hash.replace( /.*invite_/, "" ),
-		survey = SURVEYS[ 's'+surveyID ];
+		survey = APP.surveys[ 's'+surveyID ];
 
 	if ( survey ) {
 		// Get the page we are going to dump our content into.
@@ -247,7 +250,7 @@ function sendEmail( urlObj, options )
 	//console.log($('#subject').val());
 	
 	var surveyID = urlObj.hash.replace( /.*invite_/, "" ),
-		survey = SURVEYS[ 's'+surveyID ];
+		survey = APP.surveys[ 's'+surveyID ];
 
 	if ( survey ) {
 		// Get the page we are going to dump our content into.
@@ -281,7 +284,7 @@ function loadSurveys(data){
 	$.each(data.surveys.reverse(),function(){
 		s = s + '<li><a href="#surveylist?survey='+this.id+'">'+this.name+'</a></li>';
 		//var survey = this;
-		SURVEYS['s'+this.id] = {title: this.name,
+		APP.surveys['s'+this.id] = {title: this.name,
 								creator: this.creator,
 								created_at: this.created_at,
 								responses: this.responses,
@@ -299,7 +302,7 @@ function loadContactLists(data){
 	var markup = '<legend>Select one or more Contact Lists to send to:</legend>';
 	for(var i=0; i<data.total; i++){
 		//add each list to the CONTACTLASTS
-		CONTACTLISTS.push({
+		APP.contactlists.push({
 			contacts: data.lists[i].contacts,
 			contacts_uri: data.lists[i].contacts_uri,
 			id: data.lists[i].id,
