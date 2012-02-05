@@ -18,13 +18,14 @@ function callAPI(type,url,data,callback){
 	if (url.indexOf('http') === 0){
 		//passed in a proper uri, do nothing;
 		link = 'http://www.speg.com/chideit/proxy/proxy.php?method='+url;
+		//link = url;
 	}else{
 		if (url.indexOf('?') === -1 && url.charAt(url.length-1) !== '/'){
 			url = url + '/';	//I ALWAYS FORGOT TO ADD THIS STUPID SLASH
 		}
-		console.log('the url is',url);
 		if (url.charAt(0) === '/'){
 			link = 'http://www.speg.com/chideit/proxy/proxy.php?method=https://app.fluidsurveys.com/api/v2'+url;
+			//link = 'http://localhost:8000/api/v2'+url;
 		}else{
 			link = 'http://www.speg.com/chideit/proxy/proxy.php?method=https://app.fluidsurveys.com/api/v2/'+url;
 		}
@@ -32,16 +33,29 @@ function callAPI(type,url,data,callback){
 
 	}
 
+	console.log('Calling',link);
+
 	if (type.toUpperCase() === 'POST'){
 		if (typeof(data) === 'object'){
 			header = 'application/json';
 			data = stringify(data);
 		}else if(typeof(data) === 'string'){
-			header = 'application/x-www-form-urlencoded';
+			//header = 'application/x-www-form-urlencoded';
+			header = 'application/json';			
+			//need to hack this up for jQuery:
+
+			// var arr = data.split('&');
+			// var obj = {};
+			// for(var i = 0; i < arr.length; i++) {
+   //  			var bits = arr[i].split('=');
+   //  			obj[bits[0]] = bits[1];
+			// }
+			// data = $.param(obj);
 
 		}
 		console.log('POSTING ', data);
 	}
+
 
 	var j = $.ajax({
 			beforeSend: function(xhr){
@@ -56,7 +70,13 @@ function callAPI(type,url,data,callback){
 			success: function(data){
 				//console.log('callAPI',data);
 				try{
-					callback(JSON.parse(data));
+					console.log('successfully called API', data, typeof(data));
+					if (typeof(data) === 'object'){
+						console.log('how are you already an object?');
+						callback(data);
+					}else{
+						callback(JSON.parse(data));
+					}
 				}catch(err){
 					console.log('There was an API error:',err,data);
 				}
