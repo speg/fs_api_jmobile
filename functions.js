@@ -5,9 +5,10 @@ function BlockMove(event) {
 
 function stringify(obj){
 	//turns all properties into strings and returns as stringified JSON;
+	//with special escaping becasue our proxy doesn't like <> tags.
 	var dupe = {};
 	for (var name in obj){
-		dupe[name] = (''+obj[name]).replace(['>','<'],['&gt;','&lt;']);		
+		dupe[name] = (''+obj[name]);//.replace(['>','<'],['&gt;','&lt;']);		
 	}
 	console.log()
 	return JSON.stringify(dupe);
@@ -33,29 +34,15 @@ function callAPI(type,url,data,callback){
 
 	}
 
-	console.log('Calling',link);
-
+	//set POST headers based on input type
 	if (type.toUpperCase() === 'POST'){
 		if (typeof(data) === 'object'){
 			header = 'application/json';
 			data = stringify(data);
 		}else if(typeof(data) === 'string'){
-			//header = 'application/x-www-form-urlencoded';
-			header = 'application/json';			
-			//need to hack this up for jQuery:
-
-			// var arr = data.split('&');
-			// var obj = {};
-			// for(var i = 0; i < arr.length; i++) {
-   //  			var bits = arr[i].split('=');
-   //  			obj[bits[0]] = bits[1];
-			// }
-			// data = $.param(obj);
-
+			header = 'multipart/form-data';
 		}
-		console.log('POSTING ', data);
 	}
-
 
 	var j = $.ajax({
 			beforeSend: function(xhr){
@@ -65,12 +52,11 @@ function callAPI(type,url,data,callback){
 			},
 			url: link,
 			type: type,
-			processData:false,
 			data: data,
 			success: function(data){
 				//console.log('callAPI',data);
 				try{
-					console.log('successfully called API', data, typeof(data));
+					//console.log('successfully called API', data, typeof(data));
 					if (typeof(data) === 'object'){
 						console.log('how are you already an object?');
 						callback(data);
