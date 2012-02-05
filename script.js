@@ -45,17 +45,19 @@ $(document).bind( "pagebeforechange", function( e, data ) {
 		if (u.hash.search(/^#send/) !== -1 ) {
 			console.log('SEND MAIL');
 			
-			//create the email:
 
+			
+			//create the email:
+			createEmail();
 
 			//find checked contact lists
 			
 			var checked = $(':checked','#contactListSelectors');
 			
-
-
+			APP.selected_list_ids = [];
 			checked.each(function(i,el){
-				console.log('Adding contact list',+el.id.substring(9));
+				//add each list ID to the array of selected lists
+				APP.selected_list_ids.push(+el.id.substring(9));
 			});
 			
 			console.log('checked',checked);

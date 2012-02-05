@@ -316,3 +316,39 @@ function loadContactLists(data){
 	}
 	$('#contactListSelectors').html(markup);
 }
+
+function createEmail(){
+	//creates an email.
+	//adds contacts to email.
+	//sends the email.
+	console.log('sending email');
+	callAPI('POST',base+'/emails/?survey='+APP.survey.id,'{"message":"Hello Friends! [Invite Link]", "sender":"Steve &lt;steve@speg.com&gt;", "subject": "Hello World"}',readyEmail);
+}
+
+function readyEmail(data){
+	console.log('ready the email!',data);
+
+	//add contact lists if any
+	if (APP.selected_list_ids.length > 0){
+		callAPI('POST', data.recipients_uri, 'contact_list='+APP.selected_list_ids[0], function(){
+			sendEmail(data.send_uri);
+		});
+	}
+	//add recipients if any
+
+	//if either of the above, send it!
+
+	//else saved as draft
+
+}
+
+function sendEmail(uri){
+	//press the red button.
+	callAPI('POST',uri,false,function(data){
+		console.log('The email has been sent.',data)
+	});
+
+}
+
+
+
